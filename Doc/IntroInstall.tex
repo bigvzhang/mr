@@ -1,0 +1,122 @@
+\documentclass{article}
+\usepackage{qrcode}
+\usepackage{graphicx}
+\usepackage{listings}
+\begin{document}
+\title{Data Structure, Data Tools and Installation}
+\author{Vic Zhang}
+\maketitle
+\section{Data Store Server}
+\begin{table}[h]
+\begin{tabular}{c c}
+\hline\hline
+Name & Value\\[0.5ex]
+%heading
+\hline
+Protocol& sftp/scp \\
+Address&158.101.13.85 \\
+Port&22 \\
+User&uestc\\
+Data Dir & /data\\
+\hline
+\end{tabular}
+\label{table:nonlin}
+\end{table}
+Please email 1461044330@qq.com to get a user/password if want to join the project.
+\subsection{Introduction of Directories Under The Data Data Dir}
+\begin{verbatim}
+MDZStore
+Meta // meta data of futures and options
+MyLibSimple
+\end{verbatim}
+\section{Abberviations}
+MD:Market Data
+
+
+\section{Market Data Store Struture}
+\begin{verbatim}
+./MDStore                // MD for future instruments, can be empty
+./MDStore_OP             // MD for option instruments, can be empty
+./MDStoreCache           // 1M-cacheMD for future instruments, don't need to copy all data will be automaticall generated 
+./MDStoreCache_OP        // 1M-cache MD for option instruments, don't need to copy all data will be automaticall generated 
+./MDZStore
+./MDZStore/DS            // cached files for MD(don't need to know so far)
+./MDZStore/FD            // cached files for MD(don't need to know so far)
+./MDZStore/MDZ/ZByD      // compressed  for future instruments
+./MDZStore/MDZ_OP/ZByD   // compressed  for future instruments
+./MDZStore/MDZ_mIDX      // index files for compressed MD
+\end{verbatim}
+\section{Futures \& Options Meta Data}
+\begin{verbatim}
+t_CalendarDay.csv  
+t_Exchange.csv  
+t_InsCommissionRate.csv  
+t_InsLimit.csv 
+t_Instrument.csv 
+t_TradingAccount.csv
+\end{verbatim}
+\section{Tool \& Software Installation}
+
+\subsection{Install Python 3.5}
+	Please reference the document in the internet to install the sofware by yourself.
+\subsection{Install Tensorflow2.x}
+	Please reference the document in the internet to install the software(downlod package for python or build the package from source) by yourself.
+\subsection{Download Tools From https://github.com/bigvzhang/mr.git}
+\subsection{Download Data From the Data Store Server}
+\subsection{Create Configure File mr.conf}
+\begin{verbatim}
+main :
+	meta          = Path...\Meta
+	md_store_dir  = Path...\MDStore
+	md_cache      = Path...\MDStoreCache
+	fd_store_dir  = Path...\MDZStore\FD
+	defined_parameters:
+		magd_std    = [macd:1(12,26),3(12,26),5(12,26),15(12,26),30(12,26),60(12,26),1D(12,26)][ema:5(54,270)][ma:1(5,10,20,40,60,120),5(5,10,20,40,60,120),15(5,10,20,40,60,120),60(5,10,20,40,60,120)][boll:26,2][adx:14][mfi:14][dkx:20,10][days:60,1MCache]
+
+\end{verbatim}
+\subsection{Set Enviroment}
+	\paragraph
+	{PATH}(LD\_LIBRARY\_PATH for Linux) should include the library menthion above; 
+	\paragraph
+	{PYTHONPATH} should include the code download  the github
+	\paragraph{Demo Tool Py.CMD}
+	\begin{verbatim}
+@echo off
+if "%PyMROK%" == 1 (goto start)
+SET PATH=%PATH%;E:\MyLibSimple\Win64
+SET PYTHONPATH=D:\MyVirya\mr\MRPythonScript1
+SET PyMR=D:\MyVirya\mr\MRPythonScript1
+SET PyTF=D:\MyVirya\mr\MRPythonScript2
+
+:start
+set ACTUAL_PROG=%1
+rem if "%ACTUAL_PROG:~-3%"==".py" (python %PYMR%\%1 %2 %3 %4 %5 %6 %7 %8 %9) else (python %PYMR%\%1.py %2 %3 %4 %5 %6 %7 %8 %9)
+if "%ACTUAL_PROG:~-3%"==".py" (set ACTUAL_PROG=%ACTUAL_PROG%) else (set ACTUAL_PROG=%ACTUAL_PROG%.py)
+
+if exist %PYTF%\%ACTUAL_PROG% (
+	SET PROG=python %PYTF%\%ACTUAL_PROG%
+) else if exist  %PYMR%\%ACTUAL_PROG% (
+	SET PROG=python %PYMR%\%ACTUAL_PROG% 
+) else (
+	echo "Cannot Found File(%ACTUAL_PROG%)"
+	goto END
+)
+
+setlocal EnableDelayedExpansion
+set pos=1
+FOR %%A IN (%*) DO (
+	set /a pos+=1
+	if !pos! gtr 2 SET PROG=!PROG! %%A
+)
+call %PROG%
+
+:END
+	\end{verbatim}
+\section{Simpe Usage/Demo}
+Use the tool Py.cmd do the following:
+	\begin{verbatim}
+        Py muranqry2 T2003 20191202   -- show data in console
+        Py md_gui T2003 20191202 15M  -- show data in chart
+	\end{verbatim}
+		
+\end{document}
